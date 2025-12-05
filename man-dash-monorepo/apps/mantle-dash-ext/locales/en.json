@@ -1,0 +1,63 @@
+{
+  "common": {
+    "title": "Mantle Dashboard",
+    "gasPrice": "Gas Price",
+    "mntPrice": "MNT Price",
+    "lastUpdated": "Last Updated",
+    "usd": "USD",
+    "block": "Block",
+    "blockNumber": "Block: {{number}}",
+    "blockNumberPlaceholder": "Block: --"
+  },
+  "settings": {
+    "title": "Settings",
+    "network": "Network",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "alertToggle": "Enable Alerts",
+    "highThreshold": "High Threshold (Gwei)",
+    "lowThreshold": "Low Threshold (Gwei)",
+    "gasThresholds": "Gas Threshold Settings",
+    "mainnet": "Mainnet",
+    "testnet": "Testnet",
+    "zh": "中文",
+    "en": "English",
+    "back": "Back"
+  },
+  "wallet": {
+    "connected": "Connected Wallet",
+    "connect": "Connect Wallet",
+    "disconnect": "Disconnect",
+    "connectToView": "Connect wallet to view your assets",
+    "selectWallet": "Select Wallet",
+    "cancel": "Cancel",
+    "metamask": "MetaMask",
+    "metamaskNotDetected": "MetaMask (Not Detected)",
+    "walletconnect": "WalletConnect",
+    "walletconnectNotConfigured": "WalletConnect (Not Configured)",
+    "connectFailed": "Connection failed, please try again",
+    "walletconnectInDevelopment": "WalletConnect feature is under development..."
+  },
+  "theme": {
+    "switchToLight": "Switch to Light Mode",
+    "switchToDark": "Switch to Dark Mode"
+  },
+  "alerts": {
+    "gasHigh": "{{gasPrice}}: {{value}} Gwei > {{threshold}} Gwei",
+    "gasLow": "{{gasPrice}}: {{value}} Gwei < {{threshold}} Gwei"
+  },
+  "kline": {
+    "title": "K-Line Chart",
+    "loading": "Loading...",
+    "noData": "No Data",
+    "1M": "1 Month",
+    "1d": "1 Day",
+    "4h": "4 Hours",
+    "1h": "1 Hour",
+    "15m": "15 Minutes",
+    "5m": "5 Minutes"
+  }
+}
+

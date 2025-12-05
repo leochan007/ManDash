@@ -1,0 +1,63 @@
+{
+  "common": {
+    "title": "Mantle Dashboard",
+    "gasPrice": "Gas 价格",
+    "mntPrice": "MNT 价格",
+    "lastUpdated": "最后更新",
+    "usd": "USD",
+    "block": "区块",
+    "blockNumber": "Block: {{number}}",
+    "blockNumberPlaceholder": "Block: --"
+  },
+  "settings": {
+    "title": "设置",
+    "network": "网络",
+    "language": "语言",
+    "theme": "主题",
+    "light": "浅色",
+    "dark": "深色",
+    "alertToggle": "开启提醒",
+    "highThreshold": "高于阈值(Gwei)",
+    "lowThreshold": "低于阈值(Gwei)",
+    "gasThresholds": "Gas 阈值设置",
+    "mainnet": "主网",
+    "testnet": "测试网",
+    "zh": "中文",
+    "en": "English",
+    "back": "返回"
+  },
+  "wallet": {
+    "connected": "已连接钱包",
+    "connect": "连接钱包",
+    "disconnect": "断开",
+    "connectToView": "连接钱包以查看您的资产",
+    "selectWallet": "选择钱包",
+    "cancel": "取消",
+    "metamask": "MetaMask",
+    "metamaskNotDetected": "MetaMask (未检测到)",
+    "walletconnect": "WalletConnect",
+    "walletconnectNotConfigured": "WalletConnect (未配置)",
+    "connectFailed": "连接失败，请重试",
+    "walletconnectInDevelopment": "WalletConnect 功能开发中..."
+  },
+  "theme": {
+    "switchToLight": "切换到浅色模式",
+    "switchToDark": "切换到深色模式"
+  },
+  "alerts": {
+    "gasHigh": "{{gasPrice}}: {{value}} Gwei > {{threshold}} Gwei",
+    "gasLow": "{{gasPrice}}: {{value}} Gwei < {{threshold}} Gwei"
+  },
+  "kline": {
+    "title": "K线图",
+    "loading": "加载中...",
+    "noData": "暂无数据",
+    "1M": "月线",
+    "1d": "日线",
+    "4h": "4小时",
+    "1h": "1小时",
+    "15m": "15分钟",
+    "5m": "5分钟"
+  }
+}
+
