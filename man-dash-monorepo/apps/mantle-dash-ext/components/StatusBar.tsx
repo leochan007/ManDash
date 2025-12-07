@@ -6,9 +6,10 @@ interface StatusBarProps {
   colors: ThemeColors
   blockNumber: bigint | null
   toastMessage: string | null
+  gasGwei: number | null
 }
 
-export function StatusBar({ colors, blockNumber, toastMessage }: StatusBarProps) {
+export function StatusBar({ colors, blockNumber, toastMessage, gasGwei }: StatusBarProps) {
   const { t } = useTranslation()
 
   return (
@@ -47,6 +48,12 @@ export function StatusBar({ colors, blockNumber, toastMessage }: StatusBarProps)
           </Typography>
         </Box>
       )}
+
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Typography variant="caption" sx={{ color: colors.subtle, fontFamily: "monospace" }}>
+          {gasGwei !== null ? `${t("common.gasPrice")}: ${gasGwei.toFixed(3)} gwei` : `${t("common.gasPrice")}: —`}
+        </Typography>
+      </Box>
     </Box>
   )
 }

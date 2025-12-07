@@ -8,7 +8,8 @@
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
-    "package": "plasmo package"
+    "package": "plasmo package",
+    "gen:assets": "node scripts/generate-assets.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -34,7 +35,9 @@
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
     "prettier": "3.2.4",
-    "typescript": "5.3.3"
+    "typescript": "5.3.3",
+    "sharp": "^0.33.2",
+    "ffmpeg-static": "^5.2.0"
   },
   "manifest": {
     "default_locale": "en",

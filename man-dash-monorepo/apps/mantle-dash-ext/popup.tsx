@@ -10,6 +10,8 @@ import { getThemeColors, type Theme } from "./utils/theme"
 import "./i18n"
 import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet } from "./utils"
 
+const iconSvgUrl = new URL("./assets/icon.svg", import.meta.url).href
+
 type Net = "mainnet" | "testnet"
 
 function toGwei(b: bigint) {
@@ -215,9 +217,12 @@ function IndexPopup() {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2, flexShrink: 0 }}>
-        <Typography variant="h5" sx={{ fontWeight: 600, color: colors.fg }}>
-          {t("common.title")}
-        </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+          <img src={iconSvgUrl} alt="logo" style={{ width: 24, height: 24 }} />
+          <Typography variant="h5" sx={{ fontWeight: 600, color: colors.fg }}>
+            {t("common.title")}
+          </Typography>
+        </Box>
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <IconButton
             onClick={handleThemeToggle}
@@ -306,7 +311,7 @@ function IndexPopup() {
       </Box>
 
       <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-        <StatusBar colors={colors} blockNumber={blockNumber} toastMessage={toastMessage} />
+        <StatusBar colors={colors} blockNumber={blockNumber} toastMessage={toastMessage} gasGwei={gasWei !== null ? toGwei(gasWei) : null} />
       </Box>
     </Box>
   )
