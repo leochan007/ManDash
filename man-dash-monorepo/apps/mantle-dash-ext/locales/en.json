@@ -3,11 +3,18 @@
     "title": "Mantle Dashboard",
     "gasPrice": "Gas Price",
     "mntPrice": "MNT Price",
+    "marketCap": "Market Cap",
     "lastUpdated": "Last Updated",
     "usd": "USD",
     "block": "Block",
     "blockNumber": "Block: {{number}}",
-    "blockNumberPlaceholder": "Block: --"
+    "blockNumberPlaceholder": "Block: --",
+    "latestBlock": "Latest Block",
+    "blockTime": "Block Time {{seconds}}s",
+    "transactions": "Transactions",
+    "tps": "{{value}} TPS",
+    "latestL1TxnBatch": "Latest L1 Txn Batch",
+    "latestL1StateBatch": "Latest L1 State Batch"
   },
   "settings": {
     "title": "Settings",

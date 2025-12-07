@@ -3,11 +3,18 @@
     "title": "Mantle Dashboard",
     "gasPrice": "Gas 价格",
     "mntPrice": "MNT 价格",
+    "marketCap": "市值",
     "lastUpdated": "最后更新",
     "usd": "USD",
     "block": "区块",
     "blockNumber": "Block: {{number}}",
-    "blockNumberPlaceholder": "Block: --"
+    "blockNumberPlaceholder": "Block: --",
+    "latestBlock": "最新区块",
+    "blockTime": "区块时间 {{seconds}}s",
+    "transactions": "交易",
+    "tps": "{{value}} TPS",
+    "latestL1TxnBatch": "最新 L1 交易批次",
+    "latestL1StateBatch": "最新 L1 状态批次"
   },
   "settings": {
     "title": "设置",

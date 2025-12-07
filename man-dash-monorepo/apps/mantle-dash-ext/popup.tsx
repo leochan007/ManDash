@@ -1,16 +1,14 @@
 import { useEffect, useMemo, useRef, useState } from "react"
-import { createPublicClient, http } from "viem"
 import { Box, IconButton, Typography } from "@mui/material"
-import { Settings as SettingsIcon, LocalGasStation, AttachMoney, LightMode, DarkMode } from "@mui/icons-material"
+import { Settings as SettingsIcon, AttachMoney, LightMode, DarkMode, ShowChart, Speed, Storage } from "@mui/icons-material"
 import { useTranslation } from "react-i18next"
 import { Settings } from "./settings"
 import { DashboardCard } from "./components/DashboardCard"
-import { WalletConnect } from "./components/WalletConnect"
 import { StatusBar } from "./components/StatusBar"
 import { KlineCard } from "./components/KlineCard"
 import { getThemeColors, type Theme } from "./utils/theme"
-import { mantleMainnet, mantleTestnet } from "./chains"
 import "./i18n"
+import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet } from "./utils"
 
 type Net = "mainnet" | "testnet"
 
@@ -25,8 +23,16 @@ function IndexPopup() {
   const [showSettings, setShowSettings] = useState<boolean>(false)
   const [gasWei, setGasWei] = useState<bigint | null>(null)
   const [mntPrice, setMntPrice] = useState<number | null>(null)
+  const [mntBtcPrice, setMntBtcPrice] = useState<number | null>(null)
+  const [mntChangePct, setMntChangePct] = useState<number | null>(null)
+  const [marketCap, setMarketCap] = useState<number | null>(null)
   const [updatedAt, setUpdatedAt] = useState<number | null>(null)
   const [blockNumber, setBlockNumber] = useState<bigint | null>(null)
+  const [blockTimeSec, setBlockTimeSec] = useState<number | null>(null)
+  const [tps, setTps] = useState<number | null>(null)
+  const [totalTxCount, setTotalTxCount] = useState<number | null>(null)
+  const [l1TxnBatch, setL1TxnBatch] = useState<number | null>(null)
+  const [l1StateBatch, setL1StateBatch] = useState<number | null>(null)
   const [enableAlert, setEnableAlert] = useState<boolean>(true)
   const [highGwei, setHighGwei] = useState<number>(20)
   const [lowGwei, setLowGwei] = useState<number>(0.5)
@@ -52,18 +58,14 @@ function IndexPopup() {
   }, [net, theme, enableAlert, highGwei, lowGwei, i18n.language])
 
   const client = useMemo(() => {
-    const chain = net === "mainnet" ? mantleMainnet : mantleTestnet
-    return createPublicClient({
-      chain: chain as any,
-      transport: http()
-    })
+    return createClientForNet(net)
   }, [net])
 
   const lastAlertRef = useRef<number>(0)
 
   async function fetchGas() {
     try {
-      const gp = await client.getGasPrice()
+      const gp = await getGasPriceWei(client)
       setGasWei(gp)
       setUpdatedAt(Date.now())
       if (enableAlert) {
@@ -93,44 +95,64 @@ function IndexPopup() {
 
   async function fetchBlockNumber() {
     try {
-      const block = await client.getBlockNumber()
-      setBlockNumber(block)
-    } catch (e) {
-      // noop
-    }
+      const info = await getBlockInfo(client)
+      setBlockNumber(info.blockNumber)
+      if (info.blockTimeSec && info.blockTimeSec > 0) setBlockTimeSec(info.blockTimeSec)
+    } catch (e) {}
   }
 
   async function fetchMntPrice() {
+    const p = await getMntPriceUtil()
+    setMntPrice(p.usd)
+    setMntBtcPrice(p.btc)
+    setMntChangePct(p.change24h)
+  }
+
+  async function fetchMarketCap() {
+    const circulating = await getCirculatingSupply()
+    
+    console.log("circulating:", circulating)
+
+    const cap = computeMarketCap(mntPrice, circulating)
+    if (cap) setMarketCap(cap)
+  }
+
+  async function fetchTpsAndTotals() {
     try {
-      const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=mantle&vs_currencies=usd")
-      const data = await response.json()
-      if (data.mantle?.usd) {
-        setMntPrice(data.mantle.usd)
-      }
-    } catch (e) {
-      try {
-        const response = await fetch("https://api.binance.com/api/v3/ticker/price?symbol=MNTUSDT")
-        const data = await response.json()
-        if (data.price) {
-          setMntPrice(parseFloat(data.price))
-        }
-      } catch (e2) {
-        // noop
-      }
-    }
+      const r = await getTxsAndTps(client, 30n)
+      setTps(r.tps)
+      setTotalTxCount(r.totalTxs)
+    } catch (e) {}
+  }
+
+  async function fetchRollupInfo() {
+    try {
+      const info = await getRollupInfoByNet(net)
+      if (info.txBatch) setL1TxnBatch(info.txBatch)
+      if (info.stateBatch) setL1StateBatch(info.stateBatch)
+    } catch (e) {}
   }
 
   useEffect(() => {
     fetchGas()
     fetchMntPrice()
     fetchBlockNumber()
-    const gasId = setInterval(fetchGas, 30_000)
-    const priceId = setInterval(fetchMntPrice, 60_000)
-    const blockId = setInterval(fetchBlockNumber, 15_000)
+    fetchMarketCap()
+    fetchTpsAndTotals()
+    fetchRollupInfo()
+    const gasId = setInterval(fetchGas, 7_000)
+    const priceId = setInterval(fetchMntPrice, 7_000)
+    const blockId = setInterval(fetchBlockNumber, 7_000)
+    const capId = setInterval(fetchMarketCap, 10_000)
+    const tpsId = setInterval(fetchTpsAndTotals, 10_000)
+    const rollupId = setInterval(fetchRollupInfo, 10_000)
     return () => {
       clearInterval(gasId)
       clearInterval(priceId)
       clearInterval(blockId)
+      clearInterval(capId)
+      clearInterval(tpsId)
+      clearInterval(rollupId)
     }
   }, [client, enableAlert, highGwei, lowGwei, t])
 
@@ -222,30 +244,67 @@ function IndexPopup() {
         </Box>
       </Box>
 
-      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, flex: 1, overflow: "hidden", minHeight: 0, overflowY: "hidden" }}>
-        <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, flex: 1, overflow: "hidden", minHeight: 0, overflowY: "hidden" }}>
-          {/* Gas Price - 最上面 */}
-          <DashboardCard
-            icon={<LocalGasStation />}
-            label={t("common.gasPrice")}
-            value={gasWei ? `${toGwei(gasWei).toFixed(3)} Gwei` : "--"}
-            subtitle={updatedAt ? `${t("common.lastUpdated")}: ${new Date(updatedAt).toLocaleTimeString()}` : undefined}
-            colors={colors}
-          />
-          {/* MNT Price - 其次 */}
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5, flex: 1, minHeight: 0, overflow: "hidden", paddingBottom: 56 }}>
+        {/* 第一行：紧凑信息 */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1.1fr 1fr 1fr", gap: 1.5, flexShrink: 0 }}>
           <DashboardCard
             icon={<AttachMoney />}
             label={t("common.mntPrice")}
-            value={mntPrice !== null ? `$${mntPrice.toFixed(4)}` : "--"}
-            subtitle={t("common.usd")}
+            value={mntPrice !== null ? `$${mntPrice.toFixed(2)} @ ${(mntBtcPrice ?? 0).toFixed(8)} BTC${mntChangePct !== null ? ` (${mntChangePct >= 0 ? "+" : ""}${mntChangePct.toFixed(2)}%)` : ""}` : "--"}
             colors={colors}
           />
-          {/* K线图 */}
+          <DashboardCard
+            icon={<Storage />}
+            label={t("common.latestBlock")}
+            value={blockNumber ? `${blockNumber.toString()}` : "--"}
+            subtitle={blockTimeSec ? `(${blockTimeSec.toFixed(2)}s)` : undefined}
+            colors={colors}
+          />
+          <DashboardCard
+            icon={<Speed />}
+            label={t("common.transactions")}
+            value={
+              totalTxCount !== null
+                ? totalTxCount >= 1_000_000
+                  ? `${(totalTxCount / 1_000_000).toFixed(2)} M`
+                  : String(totalTxCount)
+                : "—"
+            }
+            subtitle={tps !== null ? `(${t("common.tps", { value: tps.toFixed(1) })})` : undefined}
+            colors={colors}
+          />
+        </Box>
+
+        {/* 第二行：市值 + L1 批次 */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1.1fr 1fr 1fr", gap: 1.5, flexShrink: 0 }}>
+          <DashboardCard
+            icon={<ShowChart />}
+            label={t("common.marketCap")}
+            value={marketCap !== null ? `$${marketCap.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : "--"}
+            subtitle={marketCap !== null ? `(${((marketCap ?? 0) / 1_000_000_000).toFixed(2)} B)` : undefined}
+            colors={colors}
+          />
+          <DashboardCard
+            icon={<Storage />}
+            label={t("common.latestL1TxnBatch")}
+            value={l1TxnBatch !== null ? String(l1TxnBatch) : "--"}
+            colors={colors}
+          />
+          <DashboardCard
+            icon={<Storage />}
+            label={t("common.latestL1StateBatch")}
+            value={l1StateBatch !== null ? String(l1StateBatch) : "--"}
+            colors={colors}
+          />
+        </Box>
+        <Box sx={{ flexShrink: 0 }}>
           <KlineCard colors={colors} />
         </Box>
       </Box>
 
-      <StatusBar colors={colors} blockNumber={blockNumber} toastMessage={toastMessage} />
+      <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
+        <StatusBar colors={colors} blockNumber={blockNumber} toastMessage={toastMessage} />
+      </Box>
     </Box>
   )
 }
