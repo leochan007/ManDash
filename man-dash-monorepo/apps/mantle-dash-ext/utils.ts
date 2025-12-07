@@ -1,4 +1,4 @@
-import { createPublicClient, http } from "viem"
+﻿import { createPublicClient, http } from "viem"
 import { mantleMainnet, mantleTestnet } from "./chains"
 
 export type Net = "mainnet" | "testnet"
@@ -22,24 +22,14 @@ export async function getBlockInfo(client: ReturnType<typeof createClientForNet>
 }
 
 export async function getMntPrice() {
-  // try {
-  //   const response = await fetch("https://api.coingecko.com/api/v3/simple/price?ids=mantle&vs_currencies=usd,btc&include_24hr_change=true")
-  //   const data = await response.json()
-  //   console.log("getMntPrice:", data)
-  //   const usd = typeof data?.mantle?.usd === "number" ? data.mantle.usd : null
-  //   const btc = typeof data?.mantle?.btc === "number" ? data.mantle.btc : null
-  //   const change24h = typeof data?.mantle?.usd_24h_change === "number" ? data.mantle.usd_24h_change : null
-  //   console.log("usd:", usd, " btc:", btc, " change24h:", change24h)
-  //   return { usd, btc, change24h }
-  // } catch (e) {
     try {
-      const [mntusdtRes, mntbtcRes, btcusdtRes] = await Promise.all([
+      const [mntusdtRes, mntethRes, ethusdtRes] = await Promise.all([
         fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=MNTUSDT").then((r) => r.json()),
-        fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=MNTBTC").then((r) => r.json()).catch(() => null),
-        fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=BTCUSDT").then((r) => r.json()).catch(() => null)
+        fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=MNTETH").then((r) => r.json()).catch(() => null),
+        fetch("https://api.bybit.com/v5/market/tickers?category=spot&symbol=ETHUSDT").then((r) => r.json()).catch(() => null)
       ])
       let usd: number | null = null
-      let btc: number | null = null
+      let eth: number | null = null
       let change24h: number | null = null
       const usdtList = mntusdtRes?.result?.list
       if (Array.isArray(usdtList) && usdtList.length > 0) {
@@ -47,28 +37,26 @@ export async function getMntPrice() {
         if (t?.lastPrice) usd = parseFloat(t.lastPrice)
         if (t?.price24hPcnt) change24h = parseFloat(t.price24hPcnt) * 100
       }
-      const btcList = mntbtcRes?.result?.list
-      if (Array.isArray(btcList) && btcList.length > 0) {
-        const b = btcList[0]
-        if (b?.lastPrice) btc = parseFloat(b.lastPrice)
+      const ethList = mntethRes?.result?.list
+      if (Array.isArray(ethList) && ethList.length > 0) {
+        const b = ethList[0]
+        if (b?.lastPrice) eth = parseFloat(b.lastPrice)
       }
-      if (!btc && usd) {
-        const bl = btcusdtRes?.result?.list
+      if (!eth && usd) {
+        const bl = ethusdtRes?.result?.list
         if (Array.isArray(bl) && bl.length > 0) {
           const bb = bl[0]
           if (bb?.lastPrice) {
-            const btcUsd = parseFloat(bb.lastPrice)
-            if (btcUsd > 0) btc = usd / btcUsd
+            const ethUsd = parseFloat(bb.lastPrice)
+            if (ethUsd > 0) eth = usd / ethUsd
           }
         }
       }
-      console.log("usd:", usd, " btc:", btc, " change24h:", change24h)
-      return { usd, btc, change24h }
+      console.log("usd:", usd, " eth:", eth, " change24h:", change24h)
+      return { usd, eth, change24h }
     } catch (e2) {
-      console.error(e2)
-      return { usd: null, btc: null, change24h: null }
+      return { usd: null, eth: null, change24h: null }
     }
-  // }
 }
 
 export async function getCirculatingSupply() {
@@ -130,3 +118,4 @@ export async function getRollupInfoByNet(net: Net) {
     return { txBatch: null, stateBatch: null, raw: null }
   }
 }
+

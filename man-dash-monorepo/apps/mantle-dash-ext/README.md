@@ -62,3 +62,7 @@ pnpm build
 ## Submit to the webstores
 
 部署 Plasmo 扩展最简单的方法是使用内置的 [bpp](https://bpp.browser.market) GitHub action。但在使用此操作之前，请确保构建扩展并将第一个版本上传到商店以建立基本凭据。然后，只需按照 [此设置说明](https://docs.plasmo.com/framework/workflows/submit) 操作即可实现自动化提交！
+
+curl -X POST --data '{"jsonrpc":"2.0","method":"rollup_getInfo","params":[],"id":1}' https://rpc.mantle.xyz
+
+curl -X POST --data '{"jsonrpc":"2.0","method":"rollup_getInfo","params":[],"id":1}' https://api.zan.top/public/mantle-mainnet

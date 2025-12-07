@@ -121,7 +121,7 @@ export function KlineCard({ colors }: KlineCardProps) {
   const renderCandlestick = () => {
     if (klineData.length === 0) {
       return (
-        <Box sx={{ height: 140, display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box sx={{ height: 220, display: "flex", alignItems: "center", justifyContent: "center" }}>
           <Typography variant="caption" sx={{ color: colors.subtle, fontSize: "11px" }}>
             {loading ? t("kline.loading") : error || t("kline.noData")}
           </Typography>

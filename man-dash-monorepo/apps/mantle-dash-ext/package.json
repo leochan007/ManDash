@@ -4,6 +4,7 @@
   "version": "0.0.1",
   "description": "mantle dash",
   "author": "leochan007",
+  "license": "MIT",
   "scripts": {
     "dev": "plasmo dev",
     "build": "plasmo build",
@@ -36,6 +37,7 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "default_locale": "en",
     "permissions": [
       "notifications",
       "storage",

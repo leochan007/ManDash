@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react"
+﻿import { useEffect, useMemo, useRef, useState } from "react"
 import { Box, IconButton, Typography } from "@mui/material"
 import { Settings as SettingsIcon, AttachMoney, LightMode, DarkMode, ShowChart, Speed, Storage } from "@mui/icons-material"
 import { useTranslation } from "react-i18next"
@@ -23,9 +23,10 @@ function IndexPopup() {
   const [showSettings, setShowSettings] = useState<boolean>(false)
   const [gasWei, setGasWei] = useState<bigint | null>(null)
   const [mntPrice, setMntPrice] = useState<number | null>(null)
-  const [mntBtcPrice, setMntBtcPrice] = useState<number | null>(null)
+  const [mntEthPrice, setMntEthPrice] = useState<number | null>(null)
   const [mntChangePct, setMntChangePct] = useState<number | null>(null)
   const [marketCap, setMarketCap] = useState<number | null>(null)
+  const [circulatingSupply, setCirculatingSupply] = useState<number | null>(null)
   const [updatedAt, setUpdatedAt] = useState<number | null>(null)
   const [blockNumber, setBlockNumber] = useState<bigint | null>(null)
   const [blockTimeSec, setBlockTimeSec] = useState<number | null>(null)
@@ -104,18 +105,19 @@ function IndexPopup() {
   async function fetchMntPrice() {
     const p = await getMntPriceUtil()
     setMntPrice(p.usd)
-    setMntBtcPrice(p.btc)
+    setMntEthPrice(p.eth)
     setMntChangePct(p.change24h)
   }
 
   async function fetchMarketCap() {
-    const circulating = await getCirculatingSupply()
-    
-    console.log("circulating:", circulating)
-
-    const cap = computeMarketCap(mntPrice, circulating)
-    if (cap) setMarketCap(cap)
+    const supply = await getCirculatingSupply()
+    setCirculatingSupply(supply)
   }
+
+  useEffect(() => {
+    const cap = computeMarketCap(mntPrice, circulatingSupply)
+    if (cap) setMarketCap(cap)
+  }, [mntPrice, circulatingSupply])
 
   async function fetchTpsAndTotals() {
     try {
@@ -164,7 +166,7 @@ function IndexPopup() {
 
   useEffect(() => {
     const width = "600px"
-    const height = "800px"
+    const height = "600px"
     document.documentElement.style.width = width
     document.documentElement.style.height = height
     document.body.style.width = width
@@ -176,7 +178,7 @@ function IndexPopup() {
 
   if (showSettings) {
     return (
-      <Box sx={{ width: 600, height: 800, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
+      <Box sx={{ width: 600, height: 600, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
         <Settings
           net={net}
           theme={theme}
@@ -198,7 +200,7 @@ function IndexPopup() {
     <Box
       sx={{
         width: 600,
-        height: 800,
+        height: 600,
         padding: 2,
         background: colors.bg,
         color: colors.fg,
@@ -208,7 +210,8 @@ function IndexPopup() {
         overflow: "hidden",
         overflowY: "hidden",
         position: "relative",
-        boxSizing: "border-box"
+        boxSizing: "border-box",
+        userSelect: "none"
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 2, flexShrink: 0 }}>
@@ -250,7 +253,7 @@ function IndexPopup() {
           <DashboardCard
             icon={<AttachMoney />}
             label={t("common.mntPrice")}
-            value={mntPrice !== null ? `$${mntPrice.toFixed(2)} @ ${(mntBtcPrice ?? 0).toFixed(8)} BTC${mntChangePct !== null ? ` (${mntChangePct >= 0 ? "+" : ""}${mntChangePct.toFixed(2)}%)` : ""}` : "--"}
+            value={mntPrice !== null ? `$${mntPrice.toFixed(2)} @ ${(mntEthPrice ?? 0).toFixed(8)} ETH${mntChangePct !== null ? ` (${mntChangePct >= 0 ? "+" : ""}${mntChangePct.toFixed(2)}%)` : ""}` : "--"}
             colors={colors}
           />
           <DashboardCard
