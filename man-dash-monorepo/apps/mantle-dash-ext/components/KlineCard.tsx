@@ -53,7 +53,7 @@ export function KlineCard({ colors, ticker = "MNTUSDT", dataLoader, fetchBars }:
             const bars = await fetchBars(interval)
             callback(Array.isArray(bars) ? bars : [])
           } catch (e: any) {
-            setError(e?.message || "获取数据失败")
+            setError(e?.message || "failed to fetch kline data.")
             callback([])
           } finally {
             setLoading(false)
@@ -109,7 +109,7 @@ export function KlineCard({ colors, ticker = "MNTUSDT", dataLoader, fetchBars }:
   const renderCandlestick = () => {
     return (
       <Box sx={{ position: "relative" }}>
-        <Box ref={containerRef} sx={{ height: 300, width: "100%" }} />
+        <Box ref={containerRef} sx={{ height: 260, width: "100%" }} />
         {(loading || error || chartError) && (
           <Box sx={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Typography variant="caption" sx={{ color: colors.subtle, fontSize: "11px" }}>
@@ -138,9 +138,9 @@ export function KlineCard({ colors, ticker = "MNTUSDT", dataLoader, fetchBars }:
         <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", mb: 1 }}>
           <Box sx={{ display: "flex", alignItems: "center" }}>
             <ShowChart sx={{ color: colors.fg, mr: 0.5, fontSize: "16px" }} />
-            <Typography variant="caption" sx={{ color: colors.subtle, fontSize: "12px" }}>
+            {/* <Typography variant="caption" sx={{ color: colors.subtle, fontSize: "12px" }}>
               {t("kline.title")}
-            </Typography>
+            </Typography> */}
           </Box>
           <IconButton size="small" onClick={() => chrome.tabs?.create({ url: "https://www.bybit.com/en/trade/spot/MNT/USDT" })} sx={{ color: colors.fg }}>
             <OpenInNew fontSize="small" />

@@ -40,6 +40,9 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "action": {
+      "default_popup": "popup.html"
+    },
     "default_locale": "en",
     "name": "__MSG_extension_name__",
     "description": "__MSG_extension_description__",
@@ -53,5 +56,11 @@
       "https://rpc.mantle.xyz/*",
       "https://rpc.testnet.mantle.xyz/*"
     ]
+  },
+  "plasmo": {
+    "popup": {
+      "defaultWidth": 700,
+      "defaultHeight": 720
+    }
   }
 }

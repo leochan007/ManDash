@@ -14,6 +14,9 @@ const iconSvgUrl = new URL("./assets/icon.svg", import.meta.url).href
 
 type Net = "mainnet" | "testnet"
 
+const width = 700;
+const height = 600;
+
 function toGwei(b: bigint) {
   return Number(b) / 1e9
 }
@@ -42,6 +45,7 @@ function IndexPopup() {
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const colors = getThemeColors(theme)
+  const topCardHeight = 65
 
   // restore settings
   useEffect(() => {
@@ -167,20 +171,25 @@ function IndexPopup() {
   }
 
   useEffect(() => {
-    const width = "600px"
-    const height = "720px"
-    document.documentElement.style.width = width
-    document.documentElement.style.height = height
-    document.body.style.width = width
-    document.body.style.height = height
+    document.documentElement.style.width = `${width}px`
+    document.documentElement.style.height = `${height}px`
+    document.body.style.width = `${width}px`
+    document.body.style.height = `${height}px`
     document.body.style.margin = "0"
     document.body.style.padding = "0"
     document.body.style.overflow = "hidden"
+    const iframe = window.frameElement as HTMLIFrameElement | null
+    if (iframe) {
+      iframe.style.width = `${width}px`
+      iframe.style.height = `${height}px`
+      iframe.style.minWidth = `${width}px`
+      iframe.style.minHeight = `${height}px`
+    }
   }, [])
 
   if (showSettings) {
     return (
-      <Box sx={{ width: 600, height: 720, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
+      <Box sx={{ width, height, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
         <Settings
           net={net}
           theme={theme}
@@ -201,8 +210,8 @@ function IndexPopup() {
   return (
     <Box
       sx={{
-        width: 600,
-        height: 720,
+        width,
+        height,
         padding: 2,
         background: colors.bg,
         color: colors.fg,
@@ -262,6 +271,7 @@ function IndexPopup() {
             valueColor={mntChangePct !== null ? (mntChangePct >= 0 ? "#22c55e" : "#ef4444") : undefined}
             colors={colors}
             onClick={() => chrome.tabs?.create({ url: "https://www.bybit.com/en/trade/spot/MNT/USDT" })}
+            height={topCardHeight}
           />
           <DashboardCard
             icon={<Storage />}
@@ -275,6 +285,7 @@ function IndexPopup() {
                 if (explorer) chrome.tabs?.create({ url: `${explorer}/block/${blockNumber.toString()}` })
               }
             }}
+            height={topCardHeight}
           />
           <DashboardCard
             icon={<Speed />}
@@ -292,6 +303,7 @@ function IndexPopup() {
               const explorer = getBlockExplorerUrl(net)
               if (explorer) chrome.tabs?.create({ url: `${explorer}/txs` })
             }}
+            height={topCardHeight}
           />
         </Box>
 
@@ -303,18 +315,21 @@ function IndexPopup() {
             value={marketCap !== null ? `$${marketCap.toLocaleString(undefined, { maximumFractionDigits: 2 })}` : "--"}
             subtitle={marketCap !== null ? `(${((marketCap ?? 0) / 1_000_000_000).toFixed(2)} B)` : undefined}
             colors={colors}
+            height={topCardHeight}
           />
           <DashboardCard
             icon={<Storage />}
             label={t("common.latestL1TxnBatch")}
             value={l1TxnBatch !== null ? String(l1TxnBatch) : "--"}
             colors={colors}
+            height={topCardHeight}
           />
           <DashboardCard
             icon={<Storage />}
             label={t("common.latestL1StateBatch")}
             value={l1StateBatch !== null ? String(l1StateBatch) : "--"}
             colors={colors}
+            height={topCardHeight}
           />
         </Box>
         <Box sx={{ flexShrink: 0 }}>
