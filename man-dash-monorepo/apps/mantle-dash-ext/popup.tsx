@@ -8,7 +8,7 @@ import { StatusBar } from "./components/StatusBar"
 import { KlineCard } from "./components/KlineCard"
 import { getThemeColors, type Theme } from "./utils/theme"
 import "./i18n"
-import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet, getBlockExplorerUrl } from "./utils"
+import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet, getBlockExplorerUrl, fetchBybitKlineBars } from "./utils"
 
 const iconSvgUrl = new URL("./assets/icon.svg", import.meta.url).href
 
@@ -168,7 +168,7 @@ function IndexPopup() {
 
   useEffect(() => {
     const width = "600px"
-    const height = "600px"
+    const height = "720px"
     document.documentElement.style.width = width
     document.documentElement.style.height = height
     document.body.style.width = width
@@ -180,7 +180,7 @@ function IndexPopup() {
 
   if (showSettings) {
     return (
-      <Box sx={{ width: 600, height: 600, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
+      <Box sx={{ width: 600, height: 720, background: colors.bg, color: colors.fg, overflow: "hidden" }}>
         <Settings
           net={net}
           theme={theme}
@@ -202,7 +202,7 @@ function IndexPopup() {
     <Box
       sx={{
         width: 600,
-        height: 600,
+        height: 720,
         padding: 2,
         background: colors.bg,
         color: colors.fg,
@@ -261,6 +261,7 @@ function IndexPopup() {
             value={mntPrice !== null ? `$${mntPrice.toFixed(2)} @ ${(mntEthPrice ?? 0).toFixed(8)} ETH${mntChangePct !== null ? ` (${mntChangePct >= 0 ? "+" : ""}${mntChangePct.toFixed(2)}%)` : ""}` : "--"}
             valueColor={mntChangePct !== null ? (mntChangePct >= 0 ? "#22c55e" : "#ef4444") : undefined}
             colors={colors}
+            onClick={() => chrome.tabs?.create({ url: "https://www.bybit.com/en/trade/spot/MNT/USDT" })}
           />
           <DashboardCard
             icon={<Storage />}
@@ -287,6 +288,10 @@ function IndexPopup() {
             }
             subtitle={tps !== null ? `(${t("common.tps", { value: tps.toFixed(1) })})` : undefined}
             colors={colors}
+            onClick={() => {
+              const explorer = getBlockExplorerUrl(net)
+              if (explorer) chrome.tabs?.create({ url: `${explorer}/txs` })
+            }}
           />
         </Box>
 
@@ -313,7 +318,11 @@ function IndexPopup() {
           />
         </Box>
         <Box sx={{ flexShrink: 0 }}>
-          <KlineCard colors={colors} />
+          <KlineCard
+            colors={colors}
+            ticker={"MNTUSDT"}
+            fetchBars={(iv) => fetchBybitKlineBars(iv, "MNTUSDT", "spot", 200)}
+          />
         </Box>
       </Box>
 

@@ -123,3 +123,48 @@ export async function getRollupInfoByNet(net: Net) {
   }
 }
 
+export type KlineInterval = "1M" | "1d" | "4h" | "1h" | "15m" | "5m"
+
+export interface KlineBar {
+  timestamp: number
+  open: number
+  high: number
+  low: number
+  close: number
+  volume: number
+}
+
+const bybitIntervalMap: Record<KlineInterval, string> = {
+  "1M": "M",
+  "1d": "D",
+  "4h": "240",
+  "1h": "60",
+  "15m": "15",
+  "5m": "5"
+}
+
+export async function fetchBybitKlineBars(
+  interval: KlineInterval,
+  symbol: string = "MNTUSDT",
+  category: "spot" | "linear" = "spot",
+  limit: number = 200
+): Promise<KlineBar[]> {
+  const iv = bybitIntervalMap[interval]
+  const url = `https://api.bybit.com/v5/market/kline?category=${category}&symbol=${symbol}&interval=${iv}&limit=${limit}`
+  const res = await fetch(url, { method: "GET", headers: { Accept: "application/json" } })
+  if (!res.ok) throw new Error(`HTTP ${res.status}`)
+  const json = await res.json()
+  const list = json?.result?.list
+  if (!Array.isArray(list)) return []
+  return list
+    .reverse()
+    .map((item: any[]) => ({
+      timestamp: parseInt(item[0]),
+      open: parseFloat(item[1]),
+      high: parseFloat(item[2]),
+      low: parseFloat(item[3]),
+      close: parseFloat(item[4]),
+      volume: parseFloat(item[5])
+    }))
+}
+

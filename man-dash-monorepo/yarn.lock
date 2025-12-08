@@ -5871,6 +5871,11 @@ keyvaluestorage-interface@^1.0.0:
   resolved "https://registry.yarnpkg.com/keyvaluestorage-interface/-/keyvaluestorage-interface-1.0.0.tgz#13ebdf71f5284ad54be94bd1ad9ed79adad515ff"
   integrity sha512-8t6Q3TclQ4uZynJY9IGr2+SsIGwK9JHcO6ootkHCGA0CrQCRy+VkouYNO2xicET6b9al7QKzpebNow+gkpCL8g==
 
+klinecharts@^10.0.0-beta1:
+  version "10.0.0-beta1"
+  resolved "https://registry.npmmirror.com/klinecharts/-/klinecharts-10.0.0-beta1.tgz#43e9bab3e364783b004436a61a9b9d32517d853d"
+  integrity sha512-5ZxFGjJeZqt9+q45lZDhApC3kdgrk51i27uSpIELgXJLNgfSc0anlb8XkU+52LVrBYnTv9dFr8/Q7lG81vIV1w==
+
 ky@^1.2.0:
   version "1.14.0"
   resolved "https://registry.npmmirror.com/ky/-/ky-1.14.0.tgz#0ca331409bcdcd894a85478de08e3d72aabda1c4"
