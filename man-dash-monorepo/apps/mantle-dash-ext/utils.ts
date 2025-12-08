@@ -1,4 +1,4 @@
-﻿import { createPublicClient, http } from "viem"
+import { createPublicClient, http } from "viem"
 import { mantleMainnet, mantleTestnet } from "./chains"
 
 export type Net = "mainnet" | "testnet"
@@ -6,6 +6,10 @@ export type Net = "mainnet" | "testnet"
 export function createClientForNet(net: Net) {
   const chain = net === "mainnet" ? mantleMainnet : mantleTestnet
   return createPublicClient({ chain: chain as any, transport: http() })
+}
+
+export function getBlockExplorerUrl(net: Net) {
+  return (net === "mainnet" ? mantleMainnet : mantleTestnet).blockExplorers?.default?.url ?? ""
 }
 
 export async function getGasPriceWei(client: ReturnType<typeof createClientForNet>) {

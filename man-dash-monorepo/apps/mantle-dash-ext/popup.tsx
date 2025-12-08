@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { Box, IconButton, Typography } from "@mui/material"
 import { Settings as SettingsIcon, AttachMoney, LightMode, DarkMode, ShowChart, Speed, Storage } from "@mui/icons-material"
 import { useTranslation } from "react-i18next"
@@ -8,7 +8,7 @@ import { StatusBar } from "./components/StatusBar"
 import { KlineCard } from "./components/KlineCard"
 import { getThemeColors, type Theme } from "./utils/theme"
 import "./i18n"
-import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet } from "./utils"
+import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet, getBlockExplorerUrl } from "./utils"
 
 const iconSvgUrl = new URL("./assets/icon.svg", import.meta.url).href
 
@@ -38,7 +38,7 @@ function IndexPopup() {
   const [l1StateBatch, setL1StateBatch] = useState<number | null>(null)
   const [enableAlert, setEnableAlert] = useState<boolean>(true)
   const [highGwei, setHighGwei] = useState<number>(20)
-  const [lowGwei, setLowGwei] = useState<number>(0.5)
+  const [lowGwei, setLowGwei] = useState<number>(0.01)
   const [toastMessage, setToastMessage] = useState<string | null>(null)
 
   const colors = getThemeColors(theme)
@@ -259,6 +259,7 @@ function IndexPopup() {
             icon={<AttachMoney />}
             label={t("common.mntPrice")}
             value={mntPrice !== null ? `$${mntPrice.toFixed(2)} @ ${(mntEthPrice ?? 0).toFixed(8)} ETH${mntChangePct !== null ? ` (${mntChangePct >= 0 ? "+" : ""}${mntChangePct.toFixed(2)}%)` : ""}` : "--"}
+            valueColor={mntChangePct !== null ? (mntChangePct >= 0 ? "#22c55e" : "#ef4444") : undefined}
             colors={colors}
           />
           <DashboardCard
@@ -267,6 +268,12 @@ function IndexPopup() {
             value={blockNumber ? `${blockNumber.toString()}` : "--"}
             subtitle={blockTimeSec ? `(${blockTimeSec.toFixed(2)}s)` : undefined}
             colors={colors}
+            onClick={() => {
+              if (blockNumber) {
+                const explorer = getBlockExplorerUrl(net)
+                if (explorer) chrome.tabs?.create({ url: `${explorer}/block/${blockNumber.toString()}` })
+              }
+            }}
           />
           <DashboardCard
             icon={<Speed />}
@@ -311,7 +318,7 @@ function IndexPopup() {
       </Box>
 
       <Box sx={{ position: "absolute", bottom: 0, left: 0, right: 0 }}>
-        <StatusBar colors={colors} blockNumber={blockNumber} toastMessage={toastMessage} gasGwei={gasWei !== null ? toGwei(gasWei) : null} />
+        <StatusBar colors={colors} net={net} blockNumber={blockNumber} toastMessage={toastMessage} gasGwei={gasWei !== null ? toGwei(gasWei) : null} />
       </Box>
     </Box>
   )

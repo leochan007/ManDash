@@ -8,9 +8,11 @@ interface DashboardCardProps {
   value: string
   subtitle?: string
   colors: ThemeColors
+  onClick?: () => void
+  valueColor?: string
 }
 
-export function DashboardCard({ icon, label, value, subtitle, colors }: DashboardCardProps) {
+export function DashboardCard({ icon, label, value, subtitle, colors, onClick, valueColor }: DashboardCardProps) {
   return (
     <Card
       sx={{
@@ -21,8 +23,10 @@ export function DashboardCard({ icon, label, value, subtitle, colors }: Dashboar
           boxShadow: colors.bg === "#121212" 
             ? "0 4px 12px rgba(0,0,0,0.4)" 
             : "0 4px 12px rgba(0,0,0,0.1)"
-        }
+        },
+        cursor: onClick ? "pointer" : "default"
       }}
+      onClick={onClick}
     >
       <CardContent sx={{ padding: "12px !important" }}>
         <Box sx={{ display: "flex", alignItems: "center", mb: 0.5 }}>
@@ -33,7 +37,7 @@ export function DashboardCard({ icon, label, value, subtitle, colors }: Dashboar
             {label}
           </Typography>
         </Box>
-        <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.25, color: colors.fg, fontSize: "18px" }}>
+        <Typography variant="h6" sx={{ fontWeight: 700, mb: 0.25, color: valueColor ?? colors.fg, fontSize: "18px" }}>
           {value}
         </Typography>
         {subtitle && (

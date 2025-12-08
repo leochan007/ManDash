@@ -34,6 +34,7 @@ export function Settings({
 }: SettingsProps) {
   const { t, i18n } = useTranslation()
   const colors = getThemeColors(theme)
+  const langValue = i18n.language?.startsWith("zh") ? "zh" : "en"
 
   const handleLangChange = (lang: "zh" | "en") => {
     i18n.changeLanguage(lang)
@@ -92,7 +93,7 @@ export function Settings({
           </Box>
           <FormControl fullWidth>
             <Select
-              value={i18n.language}
+              value={langValue}
               onChange={(e) => handleLangChange(e.target.value as "zh" | "en")}
               sx={{
                 background: theme === "dark" ? "#151515" : "#fff",

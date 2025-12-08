@@ -2,8 +2,8 @@ import i18n from "i18next"
 import { initReactI18next } from "react-i18next"
 import LanguageDetector from "i18next-browser-languagedetector"
 
-import zh from "./locales/zh.json"
-import en from "./locales/en.json"
+import zh from "./locales/zh/message.json"
+import en from "./locales/en/message.json"
 
 const resources = {
   zh: {
@@ -19,11 +19,13 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    fallbackLng: "zh",
+    lng: "en",
+    fallbackLng: "en",
     defaultNS: "translation",
     interpolation: {
       escapeValue: false
     },
+    load: "languageOnly",
     detection: {
       order: ["localStorage", "navigator"],
       caches: ["localStorage"],
@@ -33,8 +35,12 @@ i18n
 
 // 从 Chrome storage 同步语言设置
 chrome.storage?.local.get(["lang"]).then((res) => {
-  if (res.lang && (res.lang === "zh" || res.lang === "en")) {
-    i18n.changeLanguage(res.lang)
+  const lang = res.lang
+  if (lang === "zh" || lang === "en") {
+    i18n.changeLanguage(lang)
+  } else {
+    i18n.changeLanguage("en")
+    chrome.storage?.local.set({ lang: "en" })
   }
 })
 

@@ -1,16 +1,19 @@
 import { Box, Typography } from "@mui/material"
 import { useTranslation } from "react-i18next"
 import type { ThemeColors } from "../utils/theme"
+import { getBlockExplorerUrl } from "../utils"
 
 interface StatusBarProps {
   colors: ThemeColors
   blockNumber: bigint | null
   toastMessage: string | null
   gasGwei: number | null
+  net: "mainnet" | "testnet"
 }
 
-export function StatusBar({ colors, blockNumber, toastMessage, gasGwei }: StatusBarProps) {
+export function StatusBar({ colors, blockNumber, toastMessage, gasGwei, net }: StatusBarProps) {
   const { t } = useTranslation()
+  const explorer = getBlockExplorerUrl(net)
 
   return (
     <Box
@@ -26,7 +29,15 @@ export function StatusBar({ colors, blockNumber, toastMessage, gasGwei }: Status
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Typography variant="caption" sx={{ color: colors.subtle, fontFamily: "monospace" }}>
+        <Typography
+          variant="caption"
+          sx={{ color: colors.subtle, fontFamily: "monospace", cursor: blockNumber ? "pointer" : "default", textDecoration: blockNumber ? "underline" : "none" }}
+          onClick={() => {
+            if (blockNumber && explorer) {
+              chrome.tabs?.create({ url: `${explorer}/block/${blockNumber.toString()}` })
+            }
+          }}
+        >
           {blockNumber !== null
             ? t("common.blockNumber", { number: blockNumber.toString() })
             : t("common.blockNumberPlaceholder")}
@@ -50,7 +61,14 @@ export function StatusBar({ colors, blockNumber, toastMessage, gasGwei }: Status
       )}
 
       <Box sx={{ display: "flex", alignItems: "center" }}>
-        <Typography variant="caption" sx={{ color: colors.subtle, fontFamily: "monospace" }}>
+        <Typography
+          variant="caption"
+          sx={{ color: colors.subtle, fontFamily: "monospace", cursor: "pointer", textDecoration: "underline" }}
+          onClick={() => {
+            const url = `https://www.quicknode.com/gas-tracker/mantle`
+            chrome.tabs?.create({ url })
+          }}
+        >
           {gasGwei !== null ? `${t("common.gasPrice")}: ${gasGwei.toFixed(3)} gwei` : `${t("common.gasPrice")}: —`}
         </Typography>
       </Box>

@@ -203,7 +203,11 @@ export function KlineCard({ colors }: KlineCardProps) {
           boxShadow: colors.bg === "#121212" 
             ? "0 4px 12px rgba(0,0,0,0.4)" 
             : "0 4px 12px rgba(0,0,0,0.1)"
-        }
+        },
+        cursor: "pointer"
+      }}
+      onClick={() => {
+        chrome.tabs?.create({ url: "https://www.bybit.com/en/trade/spot/MNT/USDT" })
       }}
     >
       <CardContent sx={{ padding: "12px !important" }}>
