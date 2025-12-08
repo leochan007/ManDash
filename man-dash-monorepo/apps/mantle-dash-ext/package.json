@@ -1,8 +1,8 @@
 {
   "name": "mantle-dash-ext",
-  "displayName": "Mantle dash ext",
+  "displayName": "Mantle Dash",
   "version": "0.0.1",
-  "description": "mantle dash",
+  "description": "a dashboard for Mantle(MNT)",
   "author": "leochan007",
   "license": "MIT",
   "scripts": {
@@ -43,13 +43,13 @@
     "default_locale": "en",
     "permissions": [
       "notifications",
-      "storage",
-      "scripting",
-      "tabs"
+      "storage"
     ],
     "host_permissions": [
-      "https://*/*",
-      "http://*/*"
+      "https://api.bybit.com/*",
+      "https://api.mantle.xyz/*",
+      "https://rpc.mantle.xyz/*",
+      "https://rpc.testnet.mantle.xyz/*"
     ]
   }
 }
