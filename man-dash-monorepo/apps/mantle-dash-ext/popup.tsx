@@ -47,21 +47,33 @@ function IndexPopup() {
   const colors = getThemeColors(theme)
   const topCardHeight = 65
 
-  // restore settings
   useEffect(() => {
-    chrome.storage?.local.get(["net", "theme", "enableAlert", "highGwei", "lowGwei", "lang"]).then((res) => {
-      if (res.net) setNet(res.net as Net)
-      if (res.theme) setTheme(res.theme as Theme)
-      if (typeof res.enableAlert === "boolean") setEnableAlert(res.enableAlert)
-      if (typeof res.highGwei === "number") setHighGwei(res.highGwei)
-      if (typeof res.lowGwei === "number") setLowGwei(res.lowGwei)
-      if (res.lang && (res.lang === "zh" || res.lang === "en")) {
-        i18n.changeLanguage(res.lang)
+    try {
+      const netStr = localStorage.getItem("net")
+      if (netStr === "mainnet" || netStr === "testnet") setNet(netStr as Net)
+      const themeStr = localStorage.getItem("theme")
+      if (themeStr === "dark" || themeStr === "light") setTheme(themeStr as Theme)
+      const enableStr = localStorage.getItem("enableAlert")
+      if (enableStr !== null) setEnableAlert(enableStr === "true")
+      const highStr = localStorage.getItem("highGwei")
+      if (highStr !== null) setHighGwei(Number(highStr))
+      const lowStr = localStorage.getItem("lowGwei")
+      if (lowStr !== null) setLowGwei(Number(lowStr))
+      const langStr = localStorage.getItem("lang")
+      if (langStr && (langStr === "zh" || langStr === "en")) {
+        i18n.changeLanguage(langStr)
       }
-    })
+    } catch {}
   }, [i18n])
   useEffect(() => {
-    chrome.storage?.local.set({ net, theme, enableAlert, highGwei, lowGwei, lang: i18n.language })
+    try {
+      localStorage.setItem("net", net)
+      localStorage.setItem("theme", theme)
+      localStorage.setItem("enableAlert", String(enableAlert))
+      localStorage.setItem("highGwei", String(highGwei))
+      localStorage.setItem("lowGwei", String(lowGwei))
+      localStorage.setItem("lang", i18n.language)
+    } catch {}
   }, [net, theme, enableAlert, highGwei, lowGwei, i18n.language])
 
   const client = useMemo(() => {
@@ -87,12 +99,6 @@ function IndexPopup() {
             : t("alerts.gasLow", { gasPrice: t("common.gasPrice"), value: g.toFixed(3), threshold: lowGwei })
           setToastMessage(message)
           setTimeout(() => setToastMessage(null), 4000)
-          chrome.notifications?.create({
-            type: "basic",
-            iconUrl: "/icon.png",
-            title: t("common.title"),
-            message
-          })
         }
       }
     } catch (e) {
@@ -167,7 +173,9 @@ function IndexPopup() {
   const handleThemeToggle = () => {
     const newTheme: Theme = theme === "dark" ? "light" : "dark"
     setTheme(newTheme)
-    chrome.storage?.local.set({ theme: newTheme })
+    try {
+      localStorage.setItem("theme", newTheme)
+    } catch {}
   }
 
   useEffect(() => {

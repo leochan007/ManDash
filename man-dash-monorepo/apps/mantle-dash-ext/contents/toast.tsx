@@ -2,7 +2,11 @@ import type { PlasmoCSConfig } from "plasmo"
 import { useEffect, useState } from "react"
 
 export const config: PlasmoCSConfig = {
-  matches: ["<all_urls>"]
+  matches: [
+    "https://*.mantle.xyz/*",
+    "https://explorer.mantle.xyz/*",
+    "https://explorer.testnet.mantle.xyz/*"
+  ]
 }
 
 type Alert = { id: number; text: string }

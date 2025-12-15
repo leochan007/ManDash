@@ -46,11 +46,7 @@
     "default_locale": "en",
     "name": "Mantle Dash",
     "description": "a dashboard for Mantle(MNT)",
-    "permissions": [
-      "activeTab",
-      "notifications",
-      "storage"
-    ],
+    "permissions": [],
     "host_permissions": [
       "https://api.bybit.com/*",
       "https://api.mantle.xyz/*",

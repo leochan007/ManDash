@@ -33,20 +33,16 @@ i18n
     }
   })
 
-// 从 Chrome storage 同步语言设置
-chrome.storage?.local.get(["lang"]).then((res) => {
-  const lang = res.lang
-  if (lang === "zh" || lang === "en") {
-    i18n.changeLanguage(lang)
-  } else {
-    i18n.changeLanguage("en")
-    chrome.storage?.local.set({ lang: "en" })
-  }
-})
+const savedLang = typeof localStorage !== "undefined" ? localStorage.getItem("lang") : null
+if (savedLang === "zh" || savedLang === "en") {
+  i18n.changeLanguage(savedLang)
+} else {
+  i18n.changeLanguage("en")
+  if (typeof localStorage !== "undefined") localStorage.setItem("lang", "en")
+}
 
-// 监听语言变化，保存到 Chrome storage
 i18n.on("languageChanged", (lng) => {
-  chrome.storage?.local.set({ lang: lng })
+  if (typeof localStorage !== "undefined") localStorage.setItem("lang", lng)
 })
 
 export default i18n

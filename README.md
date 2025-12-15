@@ -1,2 +1,2 @@
 # ManDash
-Mantle Wallet/Dashboard Plugin
+Mantle Dashboard Plugin
