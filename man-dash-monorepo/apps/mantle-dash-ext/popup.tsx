@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react"
 import { Box, IconButton, Typography } from "@mui/material"
-import { Settings as SettingsIcon, AttachMoney, LightMode, DarkMode, ShowChart, Speed, Storage } from "@mui/icons-material"
+import { Settings as SettingsIcon, AttachMoney, LightMode, DarkMode, ShowChart, Speed, Storage, LocalGasStation } from "@mui/icons-material"
 import { useTranslation } from "react-i18next"
 import { Settings } from "./settings"
 import { DashboardCard } from "./components/DashboardCard"
@@ -8,7 +8,7 @@ import { StatusBar } from "./components/StatusBar"
 import { KlineCard } from "./components/KlineCard"
 import { getThemeColors, type Theme } from "./utils/theme"
 import "./i18n"
-import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getRollupInfoByNet, getBlockExplorerUrl, fetchBybitKlineBars } from "./utils"
+import { createClientForNet, getGasPriceWei, getBlockInfo, getMntPrice as getMntPriceUtil, getCirculatingSupply, computeMarketCap, getTxsAndTps, getBlockExplorerUrl, fetchBybitKlineBars } from "./utils"
 
 const iconSvgUrl = new URL("./assets/icon.svg", import.meta.url).href
 
@@ -37,8 +37,6 @@ function IndexPopup() {
   const [blockTimeSec, setBlockTimeSec] = useState<number | null>(null)
   const [tps, setTps] = useState<number | null>(null)
   const [totalTxCount, setTotalTxCount] = useState<number | null>(null)
-  const [l1TxnBatch, setL1TxnBatch] = useState<number | null>(null)
-  const [l1StateBatch, setL1StateBatch] = useState<number | null>(null)
   const [enableAlert, setEnableAlert] = useState<boolean>(true)
   const [highGwei, setHighGwei] = useState<number>(20)
   const [lowGwei, setLowGwei] = useState<number>(0.01)
@@ -139,34 +137,23 @@ function IndexPopup() {
     } catch (e) {}
   }
 
-  async function fetchRollupInfo() {
-    try {
-      const info = await getRollupInfoByNet(net)
-      if (info.txBatch) setL1TxnBatch(info.txBatch)
-      if (info.stateBatch) setL1StateBatch(info.stateBatch)
-    } catch (e) {}
-  }
-
   useEffect(() => {
     fetchGas()
     fetchMntPrice()
     fetchBlockNumber()
     fetchMarketCap()
     fetchTpsAndTotals()
-    fetchRollupInfo()
     const gasId = setInterval(fetchGas, 7_000)
     const priceId = setInterval(fetchMntPrice, 7_000)
     const blockId = setInterval(fetchBlockNumber, 7_000)
     const capId = setInterval(fetchMarketCap, 10_000)
     const tpsId = setInterval(fetchTpsAndTotals, 10_000)
-    const rollupId = setInterval(fetchRollupInfo, 10_000)
     return () => {
       clearInterval(gasId)
       clearInterval(priceId)
       clearInterval(blockId)
       clearInterval(capId)
       clearInterval(tpsId)
-      clearInterval(rollupId)
     }
   }, [client, enableAlert, highGwei, lowGwei, t])
 
@@ -315,8 +302,8 @@ function IndexPopup() {
           />
         </Box>
 
-        {/* 第二行：市值 + L1 批次 */}
-        <Box sx={{ display: "grid", gridTemplateColumns: "1.1fr 1fr 1fr", gap: 1.5, flexShrink: 0 }}>
+        {/* 第二行：市值 + Gas Price */}
+        <Box sx={{ display: "grid", gridTemplateColumns: "1.1fr 1fr", gap: 1.5, flexShrink: 0 }}>
           <DashboardCard
             icon={<ShowChart />}
             label={t("common.marketCap")}
@@ -326,17 +313,14 @@ function IndexPopup() {
             height={topCardHeight}
           />
           <DashboardCard
-            icon={<Storage />}
-            label={t("common.latestL1TxnBatch")}
-            value={l1TxnBatch !== null ? String(l1TxnBatch) : "--"}
+            icon={<LocalGasStation />}
+            label={t("common.gasPrice")}
+            value={gasWei !== null ? `${toGwei(gasWei).toFixed(2)} Gwei` : "--"}
             colors={colors}
-            height={topCardHeight}
-          />
-          <DashboardCard
-            icon={<Storage />}
-            label={t("common.latestL1StateBatch")}
-            value={l1StateBatch !== null ? String(l1StateBatch) : "--"}
-            colors={colors}
+            onClick={() => {
+              const explorer = getBlockExplorerUrl(net)
+              if (explorer) chrome.tabs?.create({ url: explorer })
+            }}
             height={topCardHeight}
           />
         </Box>

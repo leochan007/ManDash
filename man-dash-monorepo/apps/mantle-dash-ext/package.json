@@ -51,7 +51,12 @@
       "https://api.bybit.com/*",
       "https://api.mantle.xyz/*",
       "https://rpc.mantle.xyz/*",
-      "https://rpc.testnet.mantle.xyz/*"
+      "https://rpc.testnet.mantle.xyz/*",
+      "https://mantle.public-rpc.com/*",
+      "https://rpc.ankr.com/*",
+      "https://1rpc.io/*",
+      "https://explorer.mantle.xyz/*",
+      "https://mantlescan.xyz/*"
     ]
   },
   "plasmo": {

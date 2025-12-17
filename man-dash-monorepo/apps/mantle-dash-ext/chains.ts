@@ -4,7 +4,7 @@ export const mantleMainnet = defineChain({
   id: 5000,
   name: "Mantle",
   nativeCurrency: { name: "Mantle", symbol: "MNT", decimals: 18 },
-  rpcUrls: { default: { http: ["https://rpc.mantle.xyz"] } },
+  rpcUrls: { default: { http: ["https://rpc.mantle.xyz", "https://mantle.public-rpc.com", "https://rpc.ankr.com/mantle", "https://1rpc.io/mnt"] } },
   blockExplorers: { default: { name: "Mantle Explorer", url: "https://explorer.mantle.xyz" } }
 })
 

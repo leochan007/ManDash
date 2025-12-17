@@ -105,23 +105,7 @@ export async function getTxsAndTps(client: ReturnType<typeof createClientForNet>
   return { totalTxs: txs, tps }
 }
 
-export async function getRollupInfoByNet(net: Net) {
-  const rpc = (net === "mainnet" ? mantleMainnet : mantleTestnet).rpcUrls.default.http[0]
-  try {
-    const res = await fetch(rpc, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ jsonrpc: "2.0", id: 1, method: "rollup_getInfo", params: [] })
-    })
-    const data = await res.json()
-    const info = data?.result || data
-    const txBatch = Number(info?.l1TxnBatch ?? info?.latestL1TxnBatch ?? info?.l1_transaction_batch ?? 0) || null
-    const stateBatch = Number(info?.l1StateBatch ?? info?.latestL1StateBatch ?? info?.l1_state_batch ?? 0) || null
-    return { txBatch, stateBatch, raw: info }
-  } catch (e) {
-    return { txBatch: null, stateBatch: null, raw: null }
-  }
-}
+
 
 export type KlineInterval = "1M" | "1d" | "4h" | "1h" | "15m" | "5m"
 
