@@ -318,8 +318,7 @@ function IndexPopup() {
             value={gasWei !== null ? `${toGwei(gasWei).toFixed(2)} Gwei` : "--"}
             colors={colors}
             onClick={() => {
-              const explorer = getBlockExplorerUrl(net)
-              if (explorer) chrome.tabs?.create({ url: explorer })
+              chrome.tabs?.create({ url: "https://www.quicknode.com/gas-tracker/mantle" })
             }}
             height={topCardHeight}
           />

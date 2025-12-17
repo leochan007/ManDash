@@ -1,6 +1,5 @@
 import i18n from "i18next"
 import { initReactI18next } from "react-i18next"
-import LanguageDetector from "i18next-browser-languagedetector"
 
 import zh from "./locales/zh/message.json"
 import en from "./locales/en/message.json"
@@ -14,36 +13,35 @@ const resources = {
   }
 }
 
+const getInitialLang = () => {
+  try {
+    const saved = localStorage.getItem("lang")
+    if (saved === "zh" || saved === "en") return saved
+    
+    if (typeof navigator !== "undefined" && navigator.language) {
+      if (navigator.language.startsWith("zh")) return "zh"
+    }
+  } catch {}
+  return "en"
+}
+
 i18n
-  .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: "en",
+    lng: getInitialLang(),
     fallbackLng: "en",
     defaultNS: "translation",
     interpolation: {
       escapeValue: false
     },
-    load: "languageOnly",
-    detection: {
-      order: ["localStorage", "navigator"],
-      caches: ["localStorage"],
-      lookupLocalStorage: "i18nextLng"
-    }
+    load: "languageOnly"
   })
 
-const savedLang = typeof localStorage !== "undefined" ? localStorage.getItem("lang") : null
-if (savedLang === "zh" || savedLang === "en") {
-  i18n.changeLanguage(savedLang)
-} else {
-  i18n.changeLanguage("en")
-  if (typeof localStorage !== "undefined") localStorage.setItem("lang", "en")
-}
-
 i18n.on("languageChanged", (lng) => {
-  if (typeof localStorage !== "undefined") localStorage.setItem("lang", lng)
+  try {
+    localStorage.setItem("lang", lng)
+  } catch {}
 })
 
 export default i18n
-
